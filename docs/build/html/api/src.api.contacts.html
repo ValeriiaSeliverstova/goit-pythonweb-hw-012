@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>src.api.contacts module &#8212; Project name not set  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="src.api.users module" href="src.api.users.html" />
+    <link rel="prev" title="src.api namespace" href="src.api.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-src.api.contacts">
+<span id="src-api-contacts-module"></span><h1>src.api.contacts module<a class="headerlink" href="#module-src.api.contacts" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.api.contacts.create_contact">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.api.contacts.</span></span><span class="sig-name descname"><span class="pre">create_contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fastapi.Depends</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fastapi.Depends</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.api.contacts.create_contact" title="Link to this definition">¶</a></dt>
+<dd><p>Створити новий контакт.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>body</strong> (<a class="reference internal" href="src.schemas.html#src.schemas.ContactCreate" title="src.schemas.ContactCreate"><em>ContactCreate</em></a>) – Дані нового контакту.</p></li>
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>) – Сесія бази даних.</p></li>
+<li><p><strong>user</strong> (<a class="reference internal" href="src.schemas.html#src.schemas.UserResponse" title="src.schemas.UserResponse"><em>UserResponse</em></a>) – Поточний користувач.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Створений контакт.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.api.contacts.get_upcoming_birthdays">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.api.contacts.</span></span><span class="sig-name descname"><span class="pre">get_upcoming_birthdays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fastapi.Depends</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fastapi.Depends</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.api.contacts.get_upcoming_birthdays" title="Link to this definition">¶</a></dt>
+<dd><p>Отримати список контактів із днями народження,
+які наближаються впродовж зазначеної кількості днів.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>days</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.13)"><em>Annotated</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>fastapi.Query</em><em>]</em>) – Кількість днів наперед для пошуку.</p></li>
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>) – Сесія бази даних.</p></li>
+<li><p><strong>user</strong> (<a class="reference internal" href="src.schemas.html#src.schemas.UserResponse" title="src.schemas.UserResponse"><em>UserResponse</em></a>) – Поточний користувач.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Список контактів із днями народження у найближчі <cite>days</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.api.contacts.read_contact">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.api.contacts.</span></span><span class="sig-name descname"><span class="pre">read_contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contact_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fastapi.Depends</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fastapi.Depends</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.api.contacts.read_contact" title="Link to this definition">¶</a></dt>
+<dd><p>Отримати контакт за його ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>contact_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Ідентифікатор контакту.</p></li>
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>) – Сесія бази даних.</p></li>
+<li><p><strong>user</strong> (<a class="reference internal" href="src.schemas.html#src.schemas.UserResponse" title="src.schemas.UserResponse"><em>UserResponse</em></a>) – Поточний користувач.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Дані контакту.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="src.schemas.html#src.schemas.ContactResponse" title="src.schemas.ContactResponse">ContactResponse</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – Якщо контакт не знайдено (404).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.api.contacts.read_contacts">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.api.contacts.</span></span><span class="sig-name descname"><span class="pre">read_contacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fastapi.Depends</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fastapi.Depends</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.api.contacts.read_contacts" title="Link to this definition">¶</a></dt>
+<dd><p>Отримати всі контакти користувача з пагінацією.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>skip</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Кількість записів для пропуску.</p></li>
+<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Максимальна кількість записів для повернення.</p></li>
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>) – Сесія бази даних.</p></li>
+<li><p><strong>user</strong> (<a class="reference internal" href="src.schemas.html#src.schemas.UserResponse" title="src.schemas.UserResponse"><em>UserResponse</em></a>) – Поточний користувач.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Список контактів.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.api.contacts.remove_contact">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.api.contacts.</span></span><span class="sig-name descname"><span class="pre">remove_contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contact_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fastapi.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fastapi.Depends</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fastapi.Depends</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.api.contacts.remove_contact" title="Link to this definition">¶</a></dt>
+<dd><p>Видалити контакт за його ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>contact_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Ідентифікатор контакту (&gt;=1).</p></li>
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>) – Сесія бази даних.</p></li>
+<li><p><strong>user</strong> (<a class="reference internal" href="src.schemas.html#src.schemas.UserResponse" title="src.schemas.UserResponse"><em>UserResponse</em></a>) – Поточний користувач.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – Якщо контакт не знайдено (404).</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None (HTTP 204).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.api.contacts.search_contacts">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.api.contacts.</span></span><span class="sig-name descname"><span class="pre">search_contacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fastapi.Depends</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fastapi.Depends</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.api.contacts.search_contacts" title="Link to this definition">¶</a></dt>
+<dd><p>Пошук контактів за ім’ям, прізвищем або email.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>first_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.13)"><em>Annotated</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em><em>, </em><em>fastapi.Query</em><em>]</em>) – Ім’я контакту для пошуку.</p></li>
+<li><p><strong>last_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.13)"><em>Annotated</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em><em>, </em><em>fastapi.Query</em><em>]</em>) – Прізвище контакту для пошуку.</p></li>
+<li><p><strong>email</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.13)"><em>Annotated</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em><em>, </em><em>fastapi.Query</em><em>]</em>) – Email контакту для пошуку.</p></li>
+<li><p><strong>skip</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.13)"><em>Annotated</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>fastapi.Query</em><em>]</em>) – Кількість елементів, які потрібно пропустити.</p></li>
+<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.13)"><em>Annotated</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>fastapi.Query</em><em>]</em>) – Максимальна кількість результатів (1–500).</p></li>
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>) – Сесія бази даних.</p></li>
+<li><p><strong>user</strong> (<a class="reference internal" href="src.schemas.html#src.schemas.UserResponse" title="src.schemas.UserResponse"><em>UserResponse</em></a>) – Поточний користувач (з аутентифікації).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Список контактів, які відповідають критеріям.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.api.contacts.update_contact">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.api.contacts.</span></span><span class="sig-name descname"><span class="pre">update_contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contact_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fastapi.Depends</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fastapi.Depends</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.api.contacts.update_contact" title="Link to this definition">¶</a></dt>
+<dd><p>Оновити дані існуючого контакту.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>body</strong> (<a class="reference internal" href="src.schemas.html#src.schemas.ContactUpdate" title="src.schemas.ContactUpdate"><em>ContactUpdate</em></a>) – Нові дані контакту.</p></li>
+<li><p><strong>contact_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Ідентифікатор контакту.</p></li>
+<li><p><strong>db</strong> (<em>sqlalchemy.ext.asyncio.AsyncSession</em>) – Сесія бази даних.</p></li>
+<li><p><strong>user</strong> (<a class="reference internal" href="src.schemas.html#src.schemas.UserResponse" title="src.schemas.UserResponse"><em>UserResponse</em></a>) – Поточний користувач.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Оновлений контакт.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>HTTPException</strong> – Якщо контакт не знайдено (404).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Project name not set</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="src.html">src namespace</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../guide.html">Guide</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+  <li><a href="src.html">src namespace</a><ul>
+  <li><a href="src.api.html">src.api namespace</a><ul>
+      <li>Previous: <a href="src.api.html" title="previous chapter">src.api namespace</a></li>
+      <li>Next: <a href="src.api.users.html" title="next chapter">src.api.users module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/api/src.api.contacts.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

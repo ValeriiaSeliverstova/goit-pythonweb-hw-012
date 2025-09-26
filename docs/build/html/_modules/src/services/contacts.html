@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>src.services.contacts &#8212; Project name not set  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for src.services.contacts</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Сервіс для роботи з контактами: CRUD, пошук та кешування.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncSession</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.repository.contacts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContactRepository</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContactModel</span><span class="p">,</span> <span class="n">ContactUpdate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">contacts_cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.database.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+
+
+<div class="viewcode-block" id="ContactService">
+<a class="viewcode-back" href="../../../api/src.services.contacts.html#src.services.contacts.ContactService">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContactService</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Сервісний шар для роботи з контактами.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="n">AsyncSession</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ініціалізація з асинхронною сесією БД.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contact_repository</span> <span class="o">=</span> <span class="n">ContactRepository</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ContactService.create_contact">
+<a class="viewcode-back" href="../../../api/src.services.contacts.html#src.services.contacts.ContactService.create_contact">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_contact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">ContactModel</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Створити новий контакт для користувача.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">contact_repository</span><span class="o">.</span><span class="n">create_contact</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ContactService.get_contacts">
+<a class="viewcode-back" href="../../../api/src.services.contacts.html#src.services.contacts.ContactService.get_contacts">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_contacts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">,</span> <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Отримати список контактів користувача з пагінацією.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">contact_repository</span><span class="o">.</span><span class="n">get_contacts</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">limit</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ContactService.get_contact">
+<a class="viewcode-back" href="../../../api/src.services.contacts.html#src.services.contacts.ContactService.get_contact">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_contact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contact_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Отримати контакт користувача за ID.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">contact_repository</span><span class="o">.</span><span class="n">get_contact_by_id</span><span class="p">(</span><span class="n">contact_id</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ContactService.update_contact">
+<a class="viewcode-back" href="../../../api/src.services.contacts.html#src.services.contacts.ContactService.update_contact">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">update_contact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contact_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">ContactUpdate</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Оновити дані існуючого контакту користувача.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">contact_repository</span><span class="o">.</span><span class="n">update_contact</span><span class="p">(</span><span class="n">contact_id</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ContactService.remove_contact">
+<a class="viewcode-back" href="../../../api/src.services.contacts.html#src.services.contacts.ContactService.remove_contact">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">remove_contact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contact_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Видалити контакт користувача за ID.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">contact_repository</span><span class="o">.</span><span class="n">remove_contact</span><span class="p">(</span><span class="n">contact_id</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="ContactService.search_contacts">
+<a class="viewcode-back" href="../../../api/src.services.contacts.html#src.services.contacts.ContactService.search_contacts">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">search_contacts</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">first_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">last_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ContactModel</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Шукати контакти з кешуванням результатів.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            first_name: Ім’я для пошуку.</span>
+<span class="sd">            last_name: Прізвище для пошуку.</span>
+<span class="sd">            email: Email для пошуку.</span>
+<span class="sd">            skip: Кількість записів для пропуску.</span>
+<span class="sd">            limit: Кількість записів для повернення.</span>
+<span class="sd">            user: Поточний користувач.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Список знайдених контактів.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">contacts_cache</span><span class="o">.</span><span class="n">make_search_key</span><span class="p">(</span>
+            <span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">first_name</span><span class="p">,</span> <span class="n">last_name</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">limit</span>
+        <span class="p">)</span>
+        <span class="n">cached</span> <span class="o">=</span> <span class="k">await</span> <span class="n">contacts_cache</span><span class="o">.</span><span class="n">get_search_contacts</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cached</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">contact_repository</span><span class="o">.</span><span class="n">search_contacts</span><span class="p">(</span>
+            <span class="n">first_name</span><span class="p">,</span> <span class="n">last_name</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">user</span>
+        <span class="p">)</span>
+        <span class="k">await</span> <span class="n">contacts_cache</span><span class="o">.</span><span class="n">set_search_contacts</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="ContactService.upcoming_birthdays">
+<a class="viewcode-back" href="../../../api/src.services.contacts.html#src.services.contacts.ContactService.upcoming_birthdays">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">upcoming_birthdays</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">days_ahead</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="n">User</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ContactModel</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Отримати контакти з днями народження у найближчі дні (з кешем).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            days_ahead: Кількість днів наперед.</span>
+<span class="sd">            user: Поточний користувач.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Список контактів із днями народження.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">contacts_cache</span><span class="o">.</span><span class="n">make_birthdays_key</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">days_ahead</span><span class="p">)</span>
+        <span class="n">cached</span> <span class="o">=</span> <span class="k">await</span> <span class="n">contacts_cache</span><span class="o">.</span><span class="n">get_birthdays</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cached</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">contact_repository</span><span class="o">.</span><span class="n">upcoming_birthdays</span><span class="p">(</span><span class="n">days_ahead</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">contacts_cache</span><span class="o">.</span><span class="n">set_birthdays</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Project name not set</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">src</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide.html">Guide</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
